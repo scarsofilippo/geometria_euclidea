@@ -60,8 +60,15 @@
       z-index: 20;
       pointer-events: none;
     }
-    .toolbar, .nav-btn {
+    .left-nav, .toolbar, .right-nav {
       pointer-events: auto;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .toolbar {
       background: var(--card-bg);
       backdrop-filter: blur(8px);
       padding: 8px 14px;
@@ -83,10 +90,35 @@
       cursor: pointer;
       box-shadow: 0 4px 14px rgba(37,99,235,0.4);
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
     .nav-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(37,99,235,0.6);
+    }
+    .home-btn {
+      text-decoration: none;
+      color: #fff;
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      backdrop-filter: blur(8px);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .home-btn:hover {
+      background: #334155;
+      border-color: #38bdf8;
+      transform: translateY(-2px);
     }
     button, input {
       font-family: inherit;
@@ -179,15 +211,25 @@
 </head>
 <body>
   <header>
-    <div class="toolbar">
-      <h3 style="font-size: 15px; margin-right: 8px; font-weight:700;">📐 Geometria Euclidea</h3>
-      <input type="text" id="searchInput" class="search-box" placeholder="Cerca concetto...">
-      <button class="icon-btn" id="expandAllBtn">➕ Espandi tutto</button>
-      <button class="icon-btn" id="collapseAllBtn">➖ Chiudi</button>
-      <button class="icon-btn" id="resetZoomBtn">🎯 Centra</button>
-      <button class="icon-btn" id="themeBtn">🌓 Tema</button>
+    <!-- Pulsante Home sulla sinistra -->
+    <div class="left-nav">
+      <a href="index.html" class="home-btn">🏠 Home (Indice)</a>
     </div>
-    <a href="quiz.html" class="nav-btn">📝 Vai al Quiz di Geometria ➔</a>
+
+    <!-- Toolbar e collegamento al Quiz -->
+    <div class="header-actions">
+      <div class="toolbar">
+        <h3 style="font-size: 15px; margin-right: 8px; font-weight:700;">📐 Geometria Euclidea</h3>
+        <input type="text" id="searchInput" class="search-box" placeholder="Cerca concetto...">
+        <button class="icon-btn" id="expandAllBtn">➕ Espandi tutto</button>
+        <button class="icon-btn" id="collapseAllBtn">➖ Chiudi</button>
+        <button class="icon-btn" id="resetZoomBtn">🎯 Centra</button>
+        <button class="icon-btn" id="themeBtn">🌓 Tema</button>
+      </div>
+      <div class="right-nav">
+        <a href="quiz.html" class="nav-btn">📝 Vai al Quiz ➔</a>
+      </div>
+    </div>
   </header>
 
   <div id="viewport">

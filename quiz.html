@@ -37,7 +37,32 @@
       align-items: center;
       margin-bottom: 28px;
     }
-    .back-btn {
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .home-btn {
+      text-decoration: none;
+      color: #fff;
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      transition: all 0.2s;
+    }
+    .home-btn:hover {
+      background: #334155;
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+    }
+    .mindmap-btn {
       text-decoration: none;
       color: #fff;
       background: linear-gradient(135deg, #0284c7, #2563eb);
@@ -51,7 +76,7 @@
       box-shadow: 0 4px 14px rgba(37,99,235,0.4);
       transition: all 0.2s;
     }
-    .back-btn:hover {
+    .mindmap-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(37,99,235,0.6);
     }
@@ -217,11 +242,16 @@
 </head>
 <body>
   <header>
-    <div>
+    <!-- Pulsante Home sulla sinistra -->
+    <a href="index.html" class="home-btn">🏠 Home (Indice)</a>
+
+    <div style="text-align: center;">
       <h1 style="font-size: 22px; font-weight: 800;">📝 Geometria Quiz</h1>
-      <p style="color: var(--text-muted); font-size: 13px; margin-top: 3px;">Dispensa didattica: Geometria Euclidea</p>
+      <p style="color: var(--text-muted); font-size: 13px; margin-top: 2px;">Dispensa didattica: Geometria Euclidea</p>
     </div>
-    <a href="mindmap.html" class="back-btn">🧠 Vai alla Mind Map</a>
+
+    <!-- Collegamento alla Mind Map sulla destra -->
+    <a href="mindmap.html" class="mindmap-btn">🧠 Vai alla Mind Map</a>
   </header>
 
   <div class="container">
