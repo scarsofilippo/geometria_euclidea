@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I fondamenti della geometria euclidea - Audio Overview</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-audio: #f59e0b;
+      --accent-audio-hover: #d97706;
+      --primary: #0284c7;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at 50% 20%, #1e293b 0%, #0f172a 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 60px 16px;
+    }
+    header {
+      width: 100%;
+      max-width: 820px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .home-btn {
+      text-decoration: none;
+      color: #fff;
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      transition: all 0.2s;
+    }
+    .home-btn:hover {
+      background: #334155;
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+    }
+    .container {
+      width: 100%;
+      max-width: 820px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .player-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 28px 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .player-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    }
+    .badge-audio {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    h2.title {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    p.desc {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+    .audio-wrapper {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    audio {
+      width: 100%;
+      height: 46px;
+      outline: none;
+      border-radius: 8px;
+    }
+    .audio-notice {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .summary-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 26px 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .summary-section h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .topic-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .topic-item {
+      background: rgba(255,255,255,0.03);
+      border-left: 3px solid #f59e0b;
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+    }
+    .topic-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 4px;
+    }
+    .topic-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .quick-links {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .btn-quick {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      text-align: center;
+      color: #fff;
+      transition: all 0.2s;
+    }
+    .btn-mindmap {
+      background: #0284c7;
+    }
+    .btn-mindmap:hover { background: #0369a1; }
+    .btn-quiz {
+      background: #10b981;
+    }
+    .btn-quiz:hover { background: #059669; }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- Pulsante Home sulla sinistra -->
+    <a href="index.html" class="home-btn">🏠 Home (Indice)</a>
+
+    <div style="text-align: right;">
+      <span style="font-size: 13px; color: var(--text-muted);">Notebook: Geometria euclidea</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Scheda Player Audio -->
+    <div class="player-card">
+      <div class="badge-audio">🎙️ Audio Overview • NotebookLM</div>
+      <h2 class="title">I fondamenti della geometria euclidea</h2>
+      <p class="desc">
+        Panoramica approfondita in formato podcast generata da NotebookLM che spiega la nascita della geometria razionale, gli enti primitivi, i postulati e le basi deduttive della geometria euclidea.
+      </p>
+
+      <div class="audio-wrapper">
+        <audio controls preload="metadata">
+          <source src="audio.mp3" type="audio/mpeg">
+          <source src="audio.wav" type="audio/wav">
+          Il tuo browser non supporta il tag audio.
+        </audio>
+        <div class="audio-notice">
+          ℹ️ <em>Nota: se scarichi il file audio dal tuo NotebookLM (tramite i tre puntini dell'overview audio), salvalo come <strong>audio.mp3</strong> nella stessa cartella di questi file per ascoltarlo direttamente dal lettore.</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sintesi e Punti Chiave -->
+    <div class="summary-section">
+      <h3>📖 Sintesi dei Concetti Chiave Trattati nell'Audio</h3>
+      <div class="topic-list">
+        <div class="topic-item">
+          <div class="topic-title">1. Dall'origine intuitiva alla geometria razionale</div>
+          <div class="topic-desc">
+            La parola geometria deriva dal greco <em>geo</em> (terra) e <em>metron</em> (misura). Da strumento pratico di misurazione presso gli antichi Egizi, nel III sec. a.C. con Euclide e i suoi <em>Elementi</em> diventa un sistema ipotetico-deduttivo rigoroso.
+          </div>
+        </div>
+        <div class="topic-item">
+          <div class="topic-title">2. Gli Enti Primitivi</div>
+          <div class="topic-desc">
+            Concetti fondamentali che non vengono definiti per evitare regressioni all'infinito: <strong>Punto</strong> (senza dimensioni), <strong>Retta</strong> (una dimensione, infinita) e <strong>Piano</strong> (due dimensioni, infinito).
+          </div>
+        </div>
+        <div class="topic-item">
+          <div class="topic-title">3. Postulati, Teoremi e Dimostrazioni</div>
+          <div class="topic-desc">
+            I postulati sono verità evidenti assunte senza dimostrazione. I teoremi sono enunciati logici divisi in <strong>ipotesi</strong> e <strong>tesi</strong>, dimostrati attraverso una catena ininterrotta di deduzioni logiche.
+          </div>
+        </div>
+        <div class="topic-item">
+          <div class="topic-title">4. Triangoli e Criteri di Congruenza</div>
+          <div class="topic-desc">
+            Studio delle prime figure poligonali chiuse, classificazione per lati e angoli, proprietà degli isosceli ed equilateri e i tre fondamentali criteri di congruenza (LAL, ALA, LLL).
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-links">
+        <a href="mindmap.html" class="btn-quick btn-mindmap">🧠 Esplora la Mind Map</a>
+        <a href="quiz.html" class="btn-quick btn-quiz">📝 Mettiti alla prova nel Quiz</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
