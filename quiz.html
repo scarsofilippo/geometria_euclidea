@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geometria Euclidea - Quiz Interattivo</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --correct: #10b981;
+      --incorrect: #ef4444;
+      --option-bg: #27354a;
+      --option-hover: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 60px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      width: 100%;
+      max-width: 820px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .back-btn {
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+      transition: all 0.2s;
+    }
+    .back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.6);
+    }
+    .container {
+      width: 100%;
+      max-width: 820px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .stats-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: #334155;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8, #10b981);
+      transition: width 0.3s ease;
+    }
+    .question-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .q-number {
+      font-size: 12px;
+      font-weight: 700;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+    .q-text {
+      font-size: 16.5px;
+      font-weight: 600;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .option-btn {
+      background: var(--option-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.15s ease;
+    }
+    .option-btn:hover:not(:disabled) {
+      background: var(--option-hover);
+      border-color: #38bdf8;
+    }
+    .option-btn:disabled {
+      cursor: default;
+    }
+    .opt-letter {
+      background: rgba(255,255,255,0.1);
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .option-btn.correct {
+      background: rgba(16, 185, 129, 0.2) !important;
+      border-color: var(--correct) !important;
+      color: #6ee7b7 !important;
+    }
+    .option-btn.correct .opt-letter {
+      background: var(--correct);
+      color: #fff;
+    }
+    .option-btn.wrong {
+      background: rgba(239, 68, 68, 0.2) !important;
+      border-color: var(--incorrect) !important;
+      color: #fca5a5 !important;
+    }
+    .option-btn.wrong .opt-letter {
+      background: var(--incorrect);
+      color: #fff;
+    }
+    .feedback-box {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: none;
+    }
+    .feedback-box.show {
+      display: block;
+    }
+    .feedback-correct {
+      background: rgba(16, 185, 129, 0.12);
+      border-left: 4px solid var(--correct);
+      color: #a7f3d0;
+    }
+    .feedback-wrong {
+      background: rgba(239, 68, 68, 0.12);
+      border-left: 4px solid var(--incorrect);
+      color: #fecaca;
+    }
+    .score-summary {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 1px solid #38bdf8;
+      border-radius: 16px;
+      padding: 28px;
+      text-align: center;
+      display: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .score-summary.show {
+      display: block;
+    }
+    .reset-btn {
+      margin-top: 18px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .reset-btn:hover {
+      background: var(--primary-hover);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1 style="font-size: 22px; font-weight: 800;">📝 Geometria Quiz</h1>
+      <p style="color: var(--text-muted); font-size: 13px; margin-top: 3px;">Dispensa didattica: Geometria Euclidea</p>
+    </div>
+    <a href="mindmap.html" class="back-btn">🧠 Vai alla Mind Map</a>
+  </header>
+
+  <div class="container">
+    <div class="stats-card">
+      <div>Domande completate: <strong id="progressText">0 / 10</strong></div>
+      <div>Punteggio attuale: <strong id="scoreText">0 / 10</strong></div>
+    </div>
+    <div class="progress-bar-container">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+
+    <div id="quizContainer"></div>
+
+    <div id="summaryCard" class="score-summary">
+      <h2 style="font-size: 22px; margin-bottom: 8px;">Quiz Completato! 🎉</h2>
+      <p id="finalFeedback" style="font-size: 16px; color: var(--text-muted); margin-bottom: 12px;"></p>
+      <div id="finalScore" style="font-size: 32px; font-weight: 800; color: #38bdf8;"></div>
+      <button class="reset-btn" onclick="resetQuiz()">Riprova il Quiz ↺</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "Quali sono i tre 'Enti Primitivi' fondamentali della Geometria Euclidea?",
+        options: [
+          "Angolo, Triangolo, Segmento",
+          "Punto, Retta, Piano",
+          "Postulato, Teorema, Dimostrazione",
+          "Ipotenusa, Cateto, Mediana"
+        ],
+        answer: 1,
+        explanation: "Punto, Retta e Piano sono gli 'Enti Primitivi' da cui Euclide deduce razionalmente tutte le figure geometriche."
+      },
+      {
+        q: "Cosa afferma il 1° Postulato Euclideo fondamentale?",
+        options: [
+          "Per tre punti non allineati passa un solo piano",
+          "La retta è un insieme finito di punti",
+          "Per due punti distinti passa una e una sola retta",
+          "Tutti gli angoli retti sono congruenti tra loro"
+        ],
+        answer: 2,
+        explanation: "Il 1° postulato afferma che per due punti distinti del piano passa una sola retta."
+      },
+      {
+        q: "Quando due segmenti si dicono 'adiacenti'?",
+        options: [
+          "Quando sono consecutivi e appartengono alla medesima retta",
+          "Quando hanno la stessa lunghezza ma rette diverse",
+          "Quando hanno in comune un solo estremo e non sono sulla stessa retta",
+          "Quando sono paralleli e non si intersecano mai"
+        ],
+        answer: 0,
+        explanation: "Due segmenti si dicono consecutivi se hanno in comune solo un estremo; sono adiacenti se, oltre a essere consecutivi, giacciono sulla stessa retta."
+      },
+      {
+        q: "Due angoli si dicono 'supplementari' se la loro somma è uguale a:",
+        options: [
+          "Un angolo retto (90°)",
+          "Un angolo giro (360°)",
+          "Un angolo nullo (0°)",
+          "Un angolo piatto (180°)"
+        ],
+        answer: 3,
+        explanation: "Due angoli la cui somma è 90° sono complementari; se la somma è 180° (angolo piatto) sono supplementari; se è 360° sono esplementari."
+      },
+      {
+        q: "In che cosa consiste il 'Teorema Inverso' rispetto a un dato teorema?",
+        options: [
+          "Nella negazione sia dell'ipotesi sia della tesi",
+          "Nello scambio reciproco tra l'ipotesi e la tesi",
+          "Nella dimostrazione per assurdo della tesi",
+          "Nel prolungamento dei lati della figura considerata"
+        ],
+        answer: 1,
+        explanation: "Scambiando l'ipotesi con la tesi si ottiene il teorema inverso (la cui validità va a sua volta verificata o dimostrata)."
+      },
+      {
+        q: "Cosa stabilisce il 1° Criterio di Congruenza dei Triangoli (LAL)?",
+        options: [
+          "Due triangoli sono congruenti se hanno tre lati rispettivamente congruenti",
+          "Due triangoli sono congruenti se hanno due lati e l'angolo tra essi compreso congruenti",
+          "Due triangoli sono congruenti se hanno tutti gli angoli congruenti",
+          "Due triangoli sono congruenti se hanno due angoli e il lato compreso congruenti"
+        ],
+        answer: 1,
+        explanation: "Il 1° Criterio (LAL - Lato Angolo Lato) richiede che due lati e l'angolo compreso tra essi siano rispettivamente congruenti."
+      },
+      {
+        q: "Cosa stabilisce il 2° Criterio di Congruenza dei Triangoli (ALA)?",
+        options: [
+          "Un lato e i due angoli adiacenti rispettivamente congruenti",
+          "Due lati e un angolo qualunque congruenti",
+          "Due triangoli con la stessa area sono congruenti",
+          "Tre angoli ordinatamente congruenti"
+        ],
+        answer: 0,
+        explanation: "Il 2° Criterio (ALA - Angolo Lato Angolo) stabilisce che due triangoli sono congruenti se hanno un lato e i due angoli ad esso adiacenti rispettivamente congruenti."
+      },
+      {
+        q: "In un triangolo isoscele, quali elementi fondamentali sono sempre congruenti tra loro?",
+        options: [
+          "Tutti e tre i lati e tutti e tre gli angoli",
+          "Due lati e i due angoli adiacenti alla base",
+          "I tre angoli esterni",
+          "L'ipotenusa e i due cateti"
+        ],
+        answer: 1,
+        explanation: "In ogni triangolo isoscele i due lati obliqui sono congruenti e gli angoli alla base sono congruenti."
+      },
+      {
+        q: "Che cos'è la 'mediana' relativa a un lato in un triangolo?",
+        options: [
+          "Il segmento perpendicolare condotto da un vertice al lato opposto",
+          "La semiretta che divide l'angolo al vertice in due parti congruenti",
+          "Il segmento che congiunge un vertice con il punto medio del lato opposto",
+          "La retta parallela alla base condotta dal baricentro"
+        ],
+        answer: 2,
+        explanation: "La mediana di un triangolo è il segmento che unisce un vertice con il punto medio del lato opposto."
+      },
+      {
+        q: "Se due rette parallele vengono tagliate da una trasversale, gli angoli alterni interni risultano:",
+        options: [
+          "Supplementari (la loro somma fa 180°)",
+          "Complementari (la loro somma fa 90°)",
+          "Congruenti (uguali tra loro)",
+          "Sempre retti (90°)"
+        ],
+        answer: 2,
+        explanation: "Per il teorema delle rette parallele tagliate da una trasversale, le coppie di angoli alterni interni sono congruenti."
+      }
+    ];
+
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `q-card-${idx}`;
+
+        const qNum = document.createElement('div');
+        qNum.className = 'q-number';
+        qNum.textContent = `Quesito ${idx + 1} di ${questions.length}`;
+
+        const qText = document.createElement('div');
+        qText.className = 'q-text';
+        qText.textContent = q.q;
+
+        const optionsGrid = document.createElement('div');
+        optionsGrid.className = 'options-grid';
+
+        const letters = ['A', 'B', 'C', 'D'];
+        q.options.forEach((opt, optIdx) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.id = `btn-${idx}-${optIdx}`;
+          btn.innerHTML = `<span class="opt-letter">${letters[optIdx]}</span> <span>${opt}</span>`;
+          btn.onclick = () => selectAnswer(idx, optIdx);
+          optionsGrid.appendChild(btn);
+        });
+
+        const feedback = document.createElement('div');
+        feedback.className = 'feedback-box';
+        feedback.id = `feedback-${idx}`;
+
+        card.appendChild(qNum);
+        card.appendChild(qText);
+        card.appendChild(optionsGrid);
+        card.appendChild(feedback);
+
+        container.appendChild(card);
+      });
+    }
+
+    function selectAnswer(qIdx, optIdx) {
+      if (userAnswers[qIdx] !== null) return;
+      userAnswers[qIdx] = optIdx;
+
+      const q = questions[qIdx];
+      const isCorrect = (optIdx === q.answer);
+
+      for (let i = 0; i < q.options.length; i++) {
+        const btn = document.getElementById(`btn-${qIdx}-${i}`);
+        btn.disabled = true;
+        if (i === q.answer) {
+          btn.classList.add('correct');
+        } else if (i === optIdx && !isCorrect) {
+          btn.classList.add('wrong');
+        }
+      }
+
+      const fb = document.getElementById(`feedback-${qIdx}`);
+      fb.classList.add('show');
+      if (isCorrect) {
+        fb.classList.add('feedback-correct');
+        fb.innerHTML = `<strong>✓ Esatto!</strong> ${q.explanation}`;
+      } else {
+        fb.classList.add('feedback-wrong');
+        fb.innerHTML = `<strong>✗ Errato.</strong> ${q.explanation}`;
+      }
+
+      updateStats();
+    }
+
+    function updateStats() {
+      const answered = userAnswers.filter(a => a !== null).length;
+      let score = 0;
+      userAnswers.forEach((ans, idx) => {
+        if (ans === questions[idx].answer) score++;
+      });
+
+      document.getElementById('progressText').textContent = `${answered} / ${questions.length}`;
+      document.getElementById('scoreText').textContent = `${score} / ${questions.length}`;
+
+      const pct = (answered / questions.length) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+
+      if (answered === questions.length) {
+        showFinalSummary(score);
+      }
+    }
+
+    function showFinalSummary(score) {
+      const summary = document.getElementById('summaryCard');
+      const scoreEl = document.getElementById('finalScore');
+      const feedbackEl = document.getElementById('finalFeedback');
+
+      scoreEl.textContent = `${score} su ${questions.length}`;
+      if (score === 10) {
+        feedbackEl.textContent = "Eccellente! Hai una perfetta padronanza della geometria euclidea!";
+      } else if (score >= 7) {
+        feedbackEl.textContent = "Ottimo lavoro! Conosci bene definizioni, postulati e criteri di congruenza.";
+      } else {
+        feedbackEl.textContent = "Buon tentativo! Puoi consultare la Mind Map per ripassare i punti deboli.";
+      }
+
+      summary.classList.add('show');
+      summary.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetQuiz() {
+      userAnswers = new Array(questions.length).fill(null);
+      document.getElementById('summaryCard').classList.remove('show');
+      renderQuiz();
+      updateStats();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    renderQuiz();
+  </script>
+</body>
+</html>

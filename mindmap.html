@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geometria Euclidea - Mappa Concettuale Interattiva</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --line: #38bdf8;
+      --node-root: #0284c7;
+      --node-l1: #0369a1;
+      --node-l2: #075985;
+      --node-leaf: #0c4a6e;
+      --node-bg: #1e293b;
+      --node-border: #38bdf8;
+      --card-bg: rgba(30, 41, 59, 0.9);
+      --btn-bg: #334155;
+      --btn-hover: #475569;
+      --accent: #38bdf8;
+    }
+    .light-theme {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --line: #0284c7;
+      --node-root: #e0f2fe;
+      --node-l1: #bae6fd;
+      --node-l2: #7dd3fc;
+      --node-leaf: #ffffff;
+      --node-bg: #ffffff;
+      --node-border: #0284c7;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --btn-bg: #e2e8f0;
+      --btn-hover: #cbd5e1;
+      --accent: #0284c7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+    }
+    header {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .toolbar, .nav-btn {
+      pointer-events: auto;
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-btn {
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+      transition: all 0.2s;
+    }
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.6);
+    }
+    button, input {
+      font-family: inherit;
+    }
+    .icon-btn {
+      background: var(--btn-bg);
+      color: var(--text);
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .icon-btn:hover { background: var(--btn-hover); }
+    .search-box {
+      background: var(--btn-bg);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      width: 170px;
+    }
+    .search-box:focus { border-color: var(--accent); }
+    #viewport {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      position: relative;
+    }
+    #viewport:active { cursor: grabbing; }
+    svg#canvas {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .link-path {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      opacity: 0.65;
+      transition: stroke 0.3s;
+    }
+    .node-group {
+      cursor: pointer;
+      transition: transform 0.2s ease-out;
+    }
+    .node-rect {
+      rx: 8;
+      ry: 8;
+      stroke-width: 1.8;
+      transition: all 0.2s ease;
+    }
+    .node-text {
+      font-size: 12.5px;
+      fill: var(--text);
+      font-weight: 500;
+      dominant-baseline: central;
+      pointer-events: none;
+    }
+    .toggle-circle {
+      cursor: pointer;
+      fill: var(--accent);
+      stroke: var(--bg);
+      stroke-width: 1.5;
+    }
+    .toggle-text {
+      fill: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      text-anchor: middle;
+      dominant-baseline: central;
+      pointer-events: none;
+    }
+    .highlight .node-rect {
+      stroke: #f59e0b !important;
+      stroke-width: 3 !important;
+      fill: #78350f !important;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="toolbar">
+      <h3 style="font-size: 15px; margin-right: 8px; font-weight:700;">📐 Geometria Euclidea</h3>
+      <input type="text" id="searchInput" class="search-box" placeholder="Cerca concetto...">
+      <button class="icon-btn" id="expandAllBtn">➕ Espandi tutto</button>
+      <button class="icon-btn" id="collapseAllBtn">➖ Chiudi</button>
+      <button class="icon-btn" id="resetZoomBtn">🎯 Centra</button>
+      <button class="icon-btn" id="themeBtn">🌓 Tema</button>
+    </div>
+    <a href="quiz.html" class="nav-btn">📝 Vai al Quiz di Geometria ➔</a>
+  </header>
+
+  <div id="viewport">
+    <svg id="canvas">
+      <g id="transformGroup">
+        <g id="linksLayer"></g>
+        <g id="nodesLayer"></g>
+      </g>
+    </svg>
+  </div>
+
+  <script>
+    const data = {
+      id: "root",
+      text: "Geometria Euclidea",
+      color: "#0284c7",
+      children: [
+        {
+          id: "intro",
+          text: "Introduzione",
+          color: "#0369a1",
+          children: [
+            {
+              id: "enti",
+              text: "Enti Primitivi",
+              children: [
+                { id: "e1", text: "Il punto" },
+                { id: "e2", text: "La retta" },
+                { id: "e3", text: "Il piano" }
+              ]
+            },
+            {
+              id: "postulati",
+              text: "Postulati Principali",
+              children: [
+                { id: "p1", text: "1°: Per due punti distinti passa una e una sola retta" },
+                { id: "p2", text: "2°: Per tre punti non allineati passa un solo piano" },
+                { id: "p3", text: "3°: La retta è un insieme ordinato e infinito di punti" }
+              ]
+            },
+            {
+              id: "teoremi",
+              text: "Teoremi",
+              children: [
+                { id: "t1", text: "Struttura: ipotesi e tesi" },
+                { id: "t2", text: "Dimostrazione: passaggi logici deduttivi" },
+                { id: "t3", text: "Teorema inverso: scambio tra ipotesi e tesi" }
+              ]
+            }
+          ]
+        },
+        {
+          id: "rette_segmenti",
+          text: "Parti della Retta e Segmenti",
+          color: "#0369a1",
+          children: [
+            {
+              id: "elem_geom",
+              text: "Elementi Geometrici",
+              children: [
+                { id: "eg1", text: "Semiretta: origine O e punti che la precedono o seguono" },
+                { id: "eg2", text: "Segmento: insieme di punti compresi tra due estremi A e B" },
+                { id: "eg3", text: "Segmenti consecutivi: hanno in comune solo un estremo" },
+                { id: "eg4", text: "Segmenti adiacenti: consecutivi e appartenenti alla stessa retta" }
+              ]
+            },
+            {
+              id: "op_segmenti",
+              text: "Operazioni sui Segmenti",
+              children: [
+                { id: "os1", text: "Confronto: confronto per sovrapposizione degli estremi" },
+                { id: "os2", text: "Somma: unione ordinata di segmenti adiacenti" },
+                { id: "os3", text: "Differenza: segmento che addizionato al minore dà il maggiore" },
+                { id: "os4", text: "Multiplo e sottomultiplo: n segmenti congruenti" },
+                { id: "os5", text: "Punto medio: divide il segmento in due parti congruenti" }
+              ]
+            }
+          ]
+        },
+        {
+          id: "piani_figure",
+          text: "Piani e Figure Geometriche",
+          color: "#0369a1",
+          children: [
+            { id: "pf1", text: "Semipiano: retta origine che divide il piano" },
+            { id: "pf2", text: "Figure convesse: contengono il segmento tra due punti qualsiasi" },
+            { id: "pf3", text: "Figure concave: non contengono interamente il segmento" }
+          ]
+        },
+        {
+          id: "angoli",
+          text: "Angoli",
+          color: "#0369a1",
+          children: [
+            { id: "a1", text: "Definizione: parte di piano compresa tra due semirette con la stessa origine" },
+            { id: "a2", text: "Classificazione: retto (90°), acuto (<90°), ottuso (>90°), piatto, giro" },
+            { id: "a3", text: "Relazioni: complementari (somma 90°), supplementari (180°), esplementari (360°)" },
+            { id: "a4", text: "Angoli opposti al vertice: lati sono semirette opposte (congruenti)" }
+          ]
+        },
+        {
+          id: "triangoli",
+          text: "Triangoli",
+          color: "#0369a1",
+          children: [
+            {
+              id: "tr_def",
+              text: "Definizione ed Elementi",
+              children: [
+                { id: "td1", text: "Definizione: poligonale chiusa formata da 3 lati e punti interni" },
+                { id: "td2", text: "Elementi: vertici, 3 angoli interni e 3 angoli esterni" },
+                { id: "td3", text: "Linee notevoli: bisettrici, mediane e altezze" }
+              ]
+            },
+            {
+              id: "tr_class",
+              text: "Classificazione dei Triangoli",
+              children: [
+                { id: "tc1", text: "Equilatero: tre lati congruenti (e 3 angoli uguali a 60°)" },
+                { id: "tc2", text: "Isoscele: due lati congruenti e angoli alla base uguali" },
+                { id: "tc3", text: "Scaleno: tre lati diversi tra loro" },
+                { id: "tc4", text: "Rettangolo: un angolo retto di 90° (ipotenusa e cateti)" }
+              ]
+            },
+            {
+              id: "tr_cong",
+              text: "Criteri di Congruenza",
+              children: [
+                { id: "cr1", text: "1° Criterio (LAL): due lati e l'angolo compreso congruenti" },
+                { id: "cr2", text: "2° Criterio (ALA): un lato e i due angoli adiacenti congruenti" },
+                { id: "cr3", text: "3° Criterio (LLL): tre lati rispettivamente congruenti" }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    let scale = 1, panX = 100, panY = window.innerHeight / 2;
+    let isDragging = false, startX, startY;
+    const canvas = document.getElementById('canvas');
+    const transformGroup = document.getElementById('transformGroup');
+    const linksLayer = document.getElementById('linksLayer');
+    const nodesLayer = document.getElementById('nodesLayer');
+    const viewport = document.getElementById('viewport');
+
+    function initExpansion(node) {
+      if (node.children) {
+        node.expanded = true;
+        node.children.forEach(initExpansion);
+      }
+    }
+    initExpansion(data);
+
+    function computeLayout(node, depth = 0) {
+      const paddingX = 18;
+      const textWidth = node.text.length * 7.5;
+      node.width = Math.max(110, textWidth + paddingX * 2);
+      node.height = 36;
+      node.depth = depth;
+
+      if (!node.children || !node.expanded || node.children.length === 0) {
+        node.subtreeHeight = node.height + 16;
+        return;
+      }
+      let totalH = 0;
+      node.children.forEach(child => {
+        computeLayout(child, depth + 1);
+        totalH += child.subtreeHeight;
+      });
+      node.subtreeHeight = Math.max(node.height + 16, totalH);
+    }
+
+    function assignPositions(node, x, y) {
+      node.x = x;
+      node.y = y;
+      if (!node.children || !node.expanded || node.children.length === 0) return;
+
+      const totalH = node.children.reduce((acc, c) => acc + c.subtreeHeight, 0);
+      let curY = y - totalH / 2;
+      const hGap = 70;
+
+      node.children.forEach(child => {
+        const childY = curY + child.subtreeHeight / 2;
+        assignPositions(child, x + node.width + hGap, childY);
+        curY += child.subtreeHeight;
+      });
+    }
+
+    function renderTree() {
+      computeLayout(data);
+      assignPositions(data, 0, 0);
+
+      linksLayer.innerHTML = '';
+      nodesLayer.innerHTML = '';
+
+      function drawLinks(node) {
+        if (!node.children || !node.expanded) return;
+        const startX = node.x + node.width;
+        const startY = node.y + node.height / 2;
+
+        node.children.forEach(child => {
+          const endX = child.x;
+          const endY = child.y + child.height / 2;
+          const deltaX = (endX - startX) * 0.55;
+
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', `M ${startX} ${startY} C ${startX + deltaX} ${startY}, ${endX - deltaX} ${endY}, ${endX} ${endY}`);
+          path.setAttribute('class', 'link-path');
+          linksLayer.appendChild(path);
+
+          drawLinks(child);
+        });
+      }
+
+      function drawNodes(node) {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'node-group');
+        g.setAttribute('id', 'node-' + node.id);
+        g.setAttribute('transform', `translate(${node.x}, ${node.y})`);
+
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('class', 'node-rect');
+        rect.setAttribute('width', node.width);
+        rect.setAttribute('height', node.height);
+        
+        let fillColor = 'var(--panel)';
+        let strokeColor = 'var(--accent)';
+        if (node.depth === 0) { fillColor = '#0284c7'; strokeColor = '#38bdf8'; }
+        else if (node.depth === 1) { fillColor = '#0f3a5d'; strokeColor = '#38bdf8'; }
+        else if (node.depth === 2) { fillColor = '#132e47'; strokeColor = '#0ea5e9'; }
+        
+        rect.style.fill = fillColor;
+        rect.style.stroke = strokeColor;
+        g.appendChild(rect);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('class', 'node-text');
+        text.setAttribute('x', 14);
+        text.setAttribute('y', node.height / 2);
+        if (node.depth === 0) {
+          text.style.fill = '#ffffff';
+          text.style.fontWeight = '700';
+        }
+        text.textContent = node.text;
+        g.appendChild(text);
+
+        if (node.children && node.children.length > 0) {
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('class', 'toggle-circle');
+          circle.setAttribute('cx', node.width);
+          circle.setAttribute('cy', node.height / 2);
+          circle.setAttribute('r', 8);
+
+          const plusMinus = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          plusMinus.setAttribute('class', 'toggle-text');
+          plusMinus.setAttribute('x', node.width);
+          plusMinus.setAttribute('y', node.height / 2);
+          plusMinus.textContent = node.expanded ? '−' : '+';
+
+          g.appendChild(circle);
+          g.appendChild(plusMinus);
+
+          g.addEventListener('click', (e) => {
+            e.stopPropagation();
+            node.expanded = !node.expanded;
+            renderTree();
+          });
+        }
+
+        nodesLayer.appendChild(g);
+
+        if (node.children && node.expanded) {
+          node.children.forEach(drawNodes);
+        }
+      }
+
+      drawLinks(data);
+      drawNodes(data);
+    }
+
+    function updateTransform() {
+      transformGroup.setAttribute('transform', `translate(${panX}, ${panY}) scale(${scale})`);
+    }
+
+    viewport.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX - panX;
+      startY = e.clientY - panY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      panX = e.clientX - startX;
+      panY = e.clientY - startY;
+      updateTransform();
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    viewport.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = 1.08;
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+
+      let newScale = e.deltaY < 0 ? scale * zoomFactor : scale / zoomFactor;
+      newScale = Math.min(Math.max(0.3, newScale), 2.5);
+
+      panX = mouseX - (mouseX - panX) * (newScale / scale);
+      panY = mouseY - (mouseY - panY) * (newScale / scale);
+      scale = newScale;
+      updateTransform();
+    });
+
+    document.getElementById('resetZoomBtn').addEventListener('click', () => {
+      scale = 0.95;
+      panX = 80;
+      panY = window.innerHeight / 2;
+      updateTransform();
+    });
+
+    function setAllExpanded(node, state) {
+      if (node.children) {
+        node.expanded = state;
+        node.children.forEach(c => setAllExpanded(c, state));
+      }
+    }
+
+    document.getElementById('expandAllBtn').addEventListener('click', () => {
+      setAllExpanded(data, true);
+      renderTree();
+    });
+
+    document.getElementById('collapseAllBtn').addEventListener('click', () => {
+      setAllExpanded(data, false);
+      data.expanded = true;
+      renderTree();
+    });
+
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      document.body.classList.toggle('light-theme');
+      renderTree();
+    });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+      if (!q) return;
+
+      function searchAndExpand(node) {
+        let match = node.text.toLowerCase().includes(q);
+        if (node.children) {
+          node.children.forEach(child => {
+            if (searchAndExpand(child)) {
+              node.expanded = true;
+              match = true;
+            }
+          });
+        }
+        return match;
+      }
+
+      searchAndExpand(data);
+      renderTree();
+
+      function highlightMatches(node) {
+        if (node.text.toLowerCase().includes(q)) {
+          const el = document.getElementById('node-' + node.id);
+          if (el) el.classList.add('highlight');
+        }
+        if (node.children && node.expanded) {
+          node.children.forEach(highlightMatches);
+        }
+      }
+      highlightMatches(data);
+    });
+
+    renderTree();
+    updateTransform();
+  </script>
+</body>
+</html>

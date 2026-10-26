@@ -3,833 +3,202 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mappa Concettuale: Geometria Euclidea</title>
-  <!-- Tailwind CSS per utility veloci -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- D3.js per il calcolo gerarchico e proiezioni SVG curve -->
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-
+  <title>Geometria Euclidea - Hub Didattico</title>
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-mindmap: #0284c7;
+      --accent-mindmap-hover: #0369a1;
+      --accent-quiz: #10b981;
+      --accent-quiz-hover: #059669;
+    }
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      overflow: hidden;
-      user-select: none;
-      -webkit-user-select: none;
     }
-
-    /* Temi: Dark (predefinito NotebookLM) e Light */
-    :root {
-      --bg-color: #0b0f17;
-      --grid-dot: #1f293d;
-      --card-bg: #111827;
-      --card-border: #1f2937;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --link-color: #3b82f6;
-      --link-opacity: 0.6;
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at 50% 20%, #1e293b 0%, #0f172a 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 16px;
     }
-
-    body.light-theme {
-      --bg-color: #f8fafc;
-      --grid-dot: #cbd5e1;
-      --card-bg: #ffffff;
-      --card-border: #e2e8f0;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --link-color: #6366f1;
-      --link-opacity: 0.5;
+    .wrapper {
+      width: 100%;
+      max-width: 760px;
+      text-align: center;
     }
-
-    #canvas-container {
-      background-color: var(--bg-color);
-      background-image: radial-gradient(var(--grid-dot) 1.2px, transparent 1.2px);
-      background-size: 28px 28px;
-      transition: background-color 0.3s ease;
-    }
-
-    /* Stile dei nodi della Mindmap */
-    .node-group {
-      cursor: pointer;
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
-    }
-
-    .node-pill {
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-      transition: filter 0.2s ease, stroke-width 0.2s ease, transform 0.2s;
-    }
-
-    .node-group:hover .node-pill {
-      filter: brightness(1.15) drop-shadow(0 0 10px rgba(99, 102, 241, 0.35));
-    }
-
-    .node-text {
-      font-family: 'Inter', sans-serif;
+    .badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.12);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 999px;
+      padding: 6px 16px;
       font-size: 13px;
-      font-weight: 500;
-      pointer-events: none;
-      dominant-baseline: central;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
     }
-
-    .node-toggle-btn {
-      transition: fill 0.2s, stroke 0.2s, r 0.2s;
+    h1 {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #f8fafc 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-
-    .node-toggle-btn:hover {
-      r: 8.5px;
+    p.subtitle {
+      font-size: 17px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 580px;
+      margin: 0 auto 40px auto;
     }
-
-    /* Linee di collegamento curve organiche */
-    .link-path {
-      fill: none;
-      stroke: var(--link-color);
-      stroke-width: 2.2px;
-      stroke-opacity: var(--link-opacity);
-      stroke-linecap: round;
-      transition: stroke 0.3s, stroke-width 0.3s, opacity 0.35s;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
     }
-
-    .link-path.highlighted {
-      stroke: #38bdf8;
-      stroke-width: 3.5px;
-      stroke-opacity: 0.95;
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 30px 24px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-    /* Stili per evidenziazione di ricerca */
-    .node-pill.matched {
-      stroke: #f59e0b !important;
-      stroke-width: 3px !important;
-      filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.7));
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      transition: height 0.25s ease;
     }
-
-    /* Scrollbar personalizzata per il drawer dell'albero */
-    ::-webkit-scrollbar {
-      width: 6px;
+    .card-mindmap::before {
+      background: linear-gradient(90deg, #38bdf8, #0284c7);
+    }
+    .card-quiz::before {
+      background: linear-gradient(90deg, #34d399, #10b981);
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .card:hover::before {
       height: 6px;
     }
-    ::-webkit-scrollbar-track {
-      background: rgba(0,0,0,0.1);
+    .card-icon {
+      font-size: 42px;
+      margin-bottom: 16px;
     }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(156, 163, 175, 0.4);
-      border-radius: 9999px;
+    .card h2 {
+      font-size: 21px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #fff;
+      transition: all 0.2s;
+    }
+    .btn-mindmap {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .card-mindmap:hover .btn-mindmap {
+      background: linear-gradient(135deg, #0369a1, #1d4ed8);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+    }
+    .btn-quiz {
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    }
+    .card-quiz:hover .btn-quiz {
+      background: linear-gradient(135deg, #059669, #047857);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    }
+    footer {
+      margin-top: 48px;
+      font-size: 13px;
+      color: var(--text-muted);
     }
   </style>
 </head>
-<body class="relative w-screen h-screen overflow-hidden text-slate-100">
+<body>
+  <div class="wrapper">
+    <div class="badge">📐 Quaderno di Studio & Verifica</div>
+    <h1>Geometria Euclidea</h1>
+    <p class="subtitle">
+      Seleziona una delle due sezioni per esplorare i concetti fondamentali o per metterti alla prova con il quiz di verifica interattivo.
+    </p>
 
-  <!-- BARRA DEGLI STRUMENTI SUPERIORE -->
-  <header class="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
-    
-    <!-- Titolo & Badge -->
-    <div class="pointer-events-auto flex items-center space-x-3 bg-slate-900/85 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-slate-700/60 shadow-xl">
-      <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-base shadow-md">
-        📐
-      </div>
-      <div>
-        <h1 class="font-bold text-sm sm:text-base text-slate-100 tracking-tight leading-tight">Geometria Euclidea</h1>
-        <p class="text-[11px] text-slate-400">Mappa Concettuale Interattiva</p>
-      </div>
+    <div class="grid">
+      <!-- Card Mappa Concettuale -->
+      <a href="mindmap.html" class="card card-mindmap">
+        <div class="card-icon">🧠</div>
+        <h2>Mappa Concettuale</h2>
+        <p>
+          Esplora la mappa interattiva con zoom, ricerca e nodi espandibili su enti primitivi, postulati, segmenti e triangoli.
+        </p>
+        <div class="btn btn-mindmap">
+          Apri la Mappa ➔
+        </div>
+      </a>
+
+      <!-- Card Quiz -->
+      <a href="quiz.html" class="card card-quiz">
+        <div class="card-icon">📝</div>
+        <h2>Quiz Interattivo</h2>
+        <p>
+          Metti alla prova la tua preparazione con 10 quesiti completi di spiegazioni immediate e calcolo del punteggio.
+        </p>
+        <div class="btn btn-quiz">
+          Inizia il Quiz ➔
+        </div>
+      </a>
     </div>
 
-    <!-- Barra di Ricerca & Pulsanti d'azione -->
-    <div class="pointer-events-auto flex flex-wrap items-center gap-2 bg-slate-900/85 backdrop-blur-md p-1.5 rounded-2xl border border-slate-700/60 shadow-xl">
-      
-      <!-- Cerca -->
-      <div class="relative flex items-center">
-        <svg class="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/>
-        </svg>
-        <input 
-          id="search-input" 
-          type="text" 
-          placeholder="Cerca concetto..." 
-          class="w-36 sm:w-52 pl-9 pr-3 py-1.5 text-xs bg-slate-800/80 text-slate-200 placeholder-slate-400 rounded-xl border border-slate-700 focus:outline-none focus:border-indigo-500 focus:w-60 transition-all duration-300"
-        />
-        <button id="clear-search" class="hidden absolute right-2 text-slate-400 hover:text-white text-xs px-1">✕</button>
-      </div>
-
-      <div class="h-5 w-px bg-slate-700"></div>
-
-      <!-- Espandi / Riduci Tutti -->
-      <button id="btn-expand-all" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5" title="Espandi tutti i nodi">
-        <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
-        <span class="hidden md:inline">Espandi tutto</span>
-      </button>
-
-      <button id="btn-collapse-all" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5" title="Comprimi al primo livello">
-        <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-        <span class="hidden md:inline">Comprimi</span>
-      </button>
-
-      <!-- Toggle Vista Albero / Lista -->
-      <button id="btn-toggle-outline" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5" title="Apri visualizzazione ad elenco gerarchico">
-        <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
-        <span class="hidden sm:inline">Sommario</span>
-      </button>
-
-      <!-- Toggle Tema (Chiaro / Scuro) -->
-      <button id="btn-toggle-theme" class="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" title="Cambia tema">
-        <span id="theme-icon">☀️</span>
-      </button>
-    </div>
-  </header>
-
-  <!-- CONTROLLI FLOATING ZOOM (In basso a destra) -->
-  <div class="absolute bottom-6 right-6 z-20 flex flex-col gap-2 bg-slate-900/85 backdrop-blur-md p-1.5 rounded-2xl border border-slate-700/60 shadow-xl">
-    <button id="btn-zoom-in" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 font-bold transition text-lg leading-none" title="Ingrandisci">+</button>
-    <button id="btn-zoom-out" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 font-bold transition text-lg leading-none" title="Rimpicciolisci">−</button>
-    <button id="btn-zoom-reset" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition text-xs font-medium" title="Ripristina vista">1:1</button>
-    <button id="btn-fit-screen" class="w-9 h-9 rounded-xl bg-indigo-600/80 hover:bg-indigo-600 flex items-center justify-center text-white transition text-xs font-medium" title="Centra mappa">🎯</button>
+    <footer>
+      Tutti i file sono collegati e navigabili in locale senza bisogno di connessione internet.
+    </footer>
   </div>
-
-  <!-- LEGENDA GUIDA DI NAVIGAZIONE -->
-  <div class="absolute bottom-6 left-6 z-10 hidden md:flex items-center gap-4 text-xs text-slate-400 bg-slate-900/70 backdrop-blur px-3.5 py-2 rounded-xl border border-slate-800">
-    <span class="flex items-center gap-1.5"><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px]">Trascina</kbd> Sposta</span>
-    <span class="flex items-center gap-1.5"><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px]">Scroll</kbd> Zoom</span>
-    <span class="flex items-center gap-1.5"><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px]">Clic Nodo</kbd> Espandi/Collassa</span>
-  </div>
-
-  <!-- PANNELLO LATERALE: SOMMARIO AD ALBERO -->
-  <aside id="outline-drawer" class="fixed top-0 right-0 h-full w-80 sm:w-96 bg-slate-900/95 backdrop-blur-xl border-l border-slate-700 z-30 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-2xl">
-    <div class="p-4 border-b border-slate-800 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <span class="text-indigo-400 text-lg">📑</span>
-        <h2 class="font-semibold text-slate-100 text-sm">Struttura Concettuale</h2>
-      </div>
-      <button id="btn-close-outline" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">✕</button>
-    </div>
-    <div class="flex-1 overflow-y-auto p-4 space-y-2" id="outline-tree-container">
-      <!-- Generato dinamicamente da JS -->
-    </div>
-  </aside>
-
-  <!-- AREA SVG MINDMAP -->
-  <div id="canvas-container" class="w-full h-full cursor-grab active:cursor-grabbing">
-    <svg id="mindmap-svg" class="w-full h-full block">
-      <g id="main-group">
-        <g id="links-layer"></g>
-        <g id="nodes-layer"></g>
-      </g>
-    </svg>
-  </div>
-
-  <!-- SCRIPT APPLICATIVO -->
-  <script>
-    // 1. Dati gerarchici completi estratti dal documento e dall'immagine
-    const mindmapData = {
-      name: "Geometria Euclidea",
-      level: 0,
-      children: [
-        {
-          name: "Introduzione",
-          level: 1,
-          desc: "Basi teoriche, assiomi e metodo deduttivo euclideo."
-        },
-        {
-          name: "Enti e Postulati Fondamentali",
-          level: 1,
-          children: [
-            {
-              name: "Enti Primitivi",
-              level: 2,
-              children: [
-                { name: "Il punto", level: 3, desc: "Ente geometrico privo di dimensioni." },
-                { name: "La retta", level: 3, desc: "Insieme continuo e illimitato di punti con 1 sola dimensione (lunghezza)." },
-                { name: "Il piano", level: 3, desc: "Superficie illimitata bidimensionale (lunghezza e larghezza)." }
-              ]
-            },
-            {
-              name: "Postulati Principali",
-              level: 2,
-              children: [
-                { name: "1° Postulato: per due punti passa una sola retta", level: 3 },
-                { name: "2° Postulato: per tre punti non allineati passa un solo piano", level: 3 },
-                { name: "3° Postulato: la retta è un insieme ordinato e infinito di punti", level: 3 }
-              ]
-            },
-            {
-              name: "Teoremi",
-              level: 2,
-              children: [
-                { name: "Struttura: ipotesi e tesi", level: 3, desc: "L'ipotesi rappresenta la premessa data; la tesi ciò che si deve dedurre." },
-                { name: "Dimostrazione: passaggi logici dall'ipotesi alla tesi", level: 3 },
-                { name: "Teorema inverso: scambiando ipotesi e tesi", level: 3 }
-              ]
-            }
-          ]
-        },
-        {
-          name: "Parti della Retta e Segmenti",
-          level: 1,
-          children: [
-            {
-              name: "Elementi Geometrici",
-              level: 2,
-              children: [
-                { name: "Semiretta: origine O e punti che la precedono o seguono", level: 3 },
-                { name: "Segmento: punti compresi tra gli estremi A e B", level: 3 },
-                { name: "Segmenti consecutivi: hanno in comune un estremo", level: 3 },
-                { name: "Segmenti adiacenti: consecutivi sulla stessa retta", level: 3 }
-              ]
-            },
-            {
-              name: "Operazioni sui Segmenti",
-              level: 2,
-              children: [
-                { name: "Confronto: confronto per sovrapposizione degli estremi", level: 3 },
-                { name: "Somma: segmenti adiacenti", level: 3 },
-                { name: "Differenza: segmento che addizionato al minore dà il maggiore", level: 3 },
-                { name: "Multiplo e sottomultiplo: n segmenti congruenti", level: 3 },
-                { name: "Punto medio: divide il segmento in due parti congruenti", level: 3 }
-              ]
-            }
-          ]
-        },
-        {
-          name: "Piani e Figure Geometriche",
-          level: 1,
-          desc: "Porzioni di piano, figure convesse e concave."
-        },
-        {
-          name: "Angoli",
-          level: 1,
-          desc: "Ciascuna delle due porzioni di piano delimitate da due semirette con la stessa origine."
-        },
-        {
-          name: "Triangoli",
-          level: 1,
-          children: [
-            {
-              name: "Definizione ed Elementi",
-              level: 2,
-              children: [
-                { name: "Definizione: poligonale chiusa di tre lati e suoi punti interni", level: 3 },
-                { name: "Elementi: vertici, angoli interni e angoli esterni", level: 3 },
-                { name: "Linee notevoli: bisettrici, mediane e altezze", level: 3 }
-              ]
-            },
-            {
-              name: "Classificazione dei Triangoli",
-              level: 2,
-              children: [
-                { name: "Triangolo equilatero: tre lati congruenti", level: 3 },
-                { name: "Triangolo isoscele: due lati congruenti e angoli alla base uguali", level: 3 },
-                { name: "Triangolo scaleno: tre lati diversi tra loro", level: 3 }
-              ]
-            },
-            {
-              name: "Criteri di Congruenza",
-              level: 2,
-              children: [
-                { name: "Primo criterio: due lati e l'angolo compreso congruenti", level: 3 },
-                { name: "Secondo criterio: un lato e i due angoli adiacenti congruenti", level: 3 }
-              ]
-            }
-          ]
-        }
-      ]
-    };
-
-    // Stile tematico coerente con l'immagine NotebookLM originale
-    const levelStyles = {
-      0: {
-        fill: "#7c3aed",      // Viola intenso radice
-        stroke: "#a78bfa",
-        textFill: "#ffffff",
-        btnColor: "#c4b5fd",
-        rx: 14,
-        py: 12,
-        px: 24,
-        fontSize: "15px",
-        fontWeight: "700"
-      },
-      1: {
-        fill: "#2563eb",      // Blu per macro-argomenti
-        stroke: "#60a5fa",
-        textFill: "#ffffff",
-        btnColor: "#93c5fd",
-        rx: 10,
-        py: 9,
-        px: 18,
-        fontSize: "13px",
-        fontWeight: "600"
-      },
-      2: {
-        fill: "#0d9488",      // Teal/Verde acqua intermedio
-        stroke: "#2dd4bf",
-        textFill: "#ffffff",
-        btnColor: "#99f6e4",
-        rx: 8,
-        py: 8,
-        px: 16,
-        fontSize: "12.5px",
-        fontWeight: "500"
-      },
-      3: {
-        fill: "#15803d",      // Verde foglia per i dettagli finali come nello screenshot
-        stroke: "#4ade80",
-        textFill: "#f0fdf4",
-        btnColor: "#bbf7d0",
-        rx: 6,
-        py: 7,
-        px: 14,
-        fontSize: "11.5px",
-        fontWeight: "400"
-      }
-    };
-
-    // Setup SVG e Canvas
-    const svg = d3.select("#mindmap-svg");
-    const g = d3.select("#main-group");
-    const linksLayer = d3.select("#links-layer");
-    const nodesLayer = d3.select("#nodes-layer");
-
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-
-    // Configurazione Zoom & Drag
-    const zoomBehavior = d3.zoom()
-      .scaleExtent([0.15, 3])
-      .on("zoom", (event) => {
-        g.attr("transform", event.transform);
-      });
-
-    svg.call(zoomBehavior);
-
-    // Gestione ridimensionamento finestra
-    window.addEventListener('resize', () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      update(root);
-    });
-
-    // Inizializzazione D3 Hierarchy & Tree Layout
-    let root = d3.hierarchy(mindmapData, d => d.children);
-    root.x0 = height / 2;
-    root.y0 = 100;
-
-    let nodeIdCounter = 0;
-
-    // Collassa tutti i nodi sotto un dato livello (inizialmente aperti livello 0 e 1)
-    function collapseSubtree(d) {
-      if (d.children) {
-        d._children = d.children;
-        d._children.forEach(collapseSubtree);
-        d.children = null;
-      }
-    }
-
-    function expandSubtree(d) {
-      if (d._children) {
-        d.children = d._children;
-        d._children = null;
-      }
-      if (d.children) {
-        d.children.forEach(expandSubtree);
-      }
-    }
-
-    // Inizializza: espandi radice e primi rami, comprimi i sotto-rami per pulizia iniziale
-    if (root.children) {
-      root.children.forEach(child => {
-        if (child.children) {
-          child.children.forEach(collapseSubtree);
-        }
-      });
-    }
-
-    // Calcolo dimensioni testo con canvas off-screen per centratura dinamica
-    const measureCanvas = document.createElement("canvas");
-    const measureContext = measureCanvas.getContext("2d");
-
-    function getTextDimensions(text, fontSize = "13px", fontWeight = "500") {
-      measureContext.font = `${fontWeight} ${fontSize} 'Inter', sans-serif`;
-      const width = measureContext.measureText(text).width;
-      return { width, height: parseInt(fontSize, 10) * 1.3 };
-    }
-
-    // Funzione principale di rendering / update
-    function update(source) {
-      // Calcolo layout orizzontale a grandezza dinamica
-      // dx = spaziatura verticale, dy = spaziatura orizzontale tra colonne
-      const dx = 42; 
-      const dy = 260; 
-
-      const treeLayout = d3.tree().nodeSize([dx, dy]);
-      treeLayout(root);
-
-      let x0 = Infinity;
-      let x1 = -x0;
-      root.each(d => {
-        if (d.x > x1) x1 = d.x;
-        if (d.x < x0) x0 = d.x;
-      });
-
-      const nodes = root.descendants();
-      const links = root.links();
-
-      // Normalizza posizione X/Y per orientamento da sinistra a destra
-      nodes.forEach(d => {
-        d.y = d.depth * dy + 140; // Coordinata orizzontale
-      });
-
-      // =======================
-      // GESTIONE DEI NODI
-      // =======================
-      const nodeSelection = nodesLayer.selectAll("g.node-group")
-        .data(nodes, d => d.id || (d.id = ++nodeIdCounter));
-
-      // Entrata nuovi nodi
-      const nodeEnter = nodeSelection.enter().append("g")
-        .attr("class", "node-group")
-        .attr("transform", d => `translate(${source.y0},${source.x0})`)
-        .attr("opacity", 0)
-        .on("click", (event, d) => {
-          // Toggle espansione
-          toggleNode(d);
-          update(d);
-        });
-
-      // Calcola grandezza pillola per ogni nodo
-      nodes.forEach(d => {
-        const style = levelStyles[Math.min(d.depth, 3)];
-        const dims = getTextDimensions(d.data.name, style.fontSize, style.fontWeight);
-        d.boxWidth = dims.width + (style.px * 2) + (d.data.children || d.data._children || d.children || d._children ? 14 : 0);
-        d.boxHeight = dims.height + (style.py * 1.5);
-      });
-
-      // Rettangolo arrotondato (Pill)
-      nodeEnter.append("rect")
-        .attr("class", "node-pill")
-        .attr("rx", d => levelStyles[Math.min(d.depth, 3)].rx)
-        .attr("ry", d => levelStyles[Math.min(d.depth, 3)].rx)
-        .attr("stroke-width", "1.5px");
-
-      // Testo del nodo
-      nodeEnter.append("text")
-        .attr("class", "node-text")
-        .attr("text-anchor", "start")
-        .text(d => d.data.name);
-
-      // Icona o cerchietto di espansione (+/-)
-      const toggleG = nodeEnter.append("g")
-        .attr("class", "toggle-group");
-
-      toggleG.append("circle")
-        .attr("class", "node-toggle-btn")
-        .attr("r", 7)
-        .attr("stroke-width", "1.5px");
-
-      toggleG.append("text")
-        .attr("class", "toggle-symbol")
-        .attr("text-anchor", "middle")
-        .attr("dominant-baseline", "central")
-        .attr("font-size", "10px")
-        .attr("font-weight", "bold");
-
-      // =======================
-      // TRANSIZIONE & AGGIORNAMENTO NODI
-      // =======================
-      const nodeUpdate = nodeSelection.merge(nodeEnter).transition()
-        .duration(450)
-        .ease(d3.easeCubicOut)
-        .attr("transform", d => `translate(${d.y},${d.x})`)
-        .attr("opacity", 1);
-
-      nodeUpdate.select(".node-pill")
-        .attr("x", 0)
-        .attr("y", d => -d.boxHeight / 2)
-        .attr("width", d => d.boxWidth)
-        .attr("height", d => d.boxHeight)
-        .attr("fill", d => levelStyles[Math.min(d.depth, 3)].fill)
-        .attr("stroke", d => levelStyles[Math.min(d.depth, 3)].stroke);
-
-      nodeUpdate.select(".node-text")
-        .attr("x", d => levelStyles[Math.min(d.depth, 3)].px)
-        .attr("y", 0)
-        .attr("fill", d => levelStyles[Math.min(d.depth, 3)].textFill)
-        .style("font-size", d => levelStyles[Math.min(d.depth, 3)].fontSize)
-        .style("font-weight", d => levelStyles[Math.min(d.depth, 3)].fontWeight);
-
-      nodeUpdate.select(".toggle-group")
-        .attr("transform", d => `translate(${d.boxWidth}, 0)`)
-        .style("display", d => (d.data.children || d.data._children || d.children || d._children) ? "block" : "none");
-
-      nodeUpdate.select(".node-toggle-btn")
-        .attr("fill", d => levelStyles[Math.min(d.depth, 3)].fill)
-        .attr("stroke", d => levelStyles[Math.min(d.depth, 3)].stroke);
-
-      nodeUpdate.select(".toggle-symbol")
-        .attr("fill", "#ffffff")
-        .text(d => d._children ? "+" : (d.children ? "−" : ""));
-
-      // =======================
-      // USCITA DEI NODI RIMOSSI
-      // =======================
-      nodeSelection.exit().transition()
-        .duration(350)
-        .ease(d3.easeCubicIn)
-        .attr("transform", d => `translate(${source.y},${source.x})`)
-        .attr("opacity", 0)
-        .remove();
-
-      // =======================
-      // COLLEGAMENTI CURVI (BÉZIER)
-      // =======================
-      const linkSelection = linksLayer.selectAll("path.link-path")
-        .data(links, d => d.target.id);
-
-      // Entrata rami
-      const linkEnter = linkSelection.enter().append("path")
-        .attr("class", "link-path")
-        .attr("d", () => {
-          const o = { x: source.x0, y: source.y0, boxWidth: 0 };
-          return diagonal({ source: o, target: o });
-        });
-
-      // Transizione e aggiornamento rami
-      linkSelection.merge(linkEnter).transition()
-        .duration(450)
-        .ease(d3.easeCubicOut)
-        .attr("d", d => diagonal(d));
-
-      // Uscita rami rimossi
-      linkSelection.exit().transition()
-        .duration(350)
-        .ease(d3.easeCubicIn)
-        .attr("d", () => {
-          const o = { x: source.x, y: source.y, boxWidth: 0 };
-          return diagonal({ source: o, target: o });
-        })
-        .remove();
-
-      // Memorizza posizioni per transizioni fluide successive
-      nodes.forEach(d => {
-        d.x0 = d.x;
-        d.y0 = d.y;
-      });
-
-      // Aggiorna anche l'elenco nel drawer
-      renderOutlineTree();
-    }
-
-    // Generatore curva di Bézier morbida orizzontale
-    function diagonal(d) {
-      const sourceX = d.source.y + (d.source.boxWidth || 0);
-      const sourceY = d.source.x;
-      const targetX = d.target.y;
-      const targetY = d.target.x;
-      const midX = (sourceX + targetX) / 2;
-
-      return `M ${sourceX} ${sourceY}
-              C ${midX} ${sourceY},
-                ${midX} ${targetY},
-                ${targetX} ${targetY}`;
-    }
-
-    // Toggle nodo (espandi / comprimi)
-    function toggleNode(d) {
-      if (d.children) {
-        d._children = d.children;
-        d.children = null;
-      } else if (d._children) {
-        d.children = d._children;
-        d._children = null;
-      }
-    }
-
-    // Centratura automatica della mappa sullo schermo
-    function fitToScreen(duration = 750) {
-      const bounds = g.node().getBBox();
-      if (!bounds.width || !bounds.height) return;
-
-      const fullWidth = window.innerWidth;
-      const fullHeight = window.innerHeight;
-      const padding = 80;
-
-      const midX = bounds.x + bounds.width / 2;
-      const midY = bounds.y + bounds.height / 2;
-
-      const scale = Math.max(0.2, Math.min(1.4, 0.85 / Math.max(bounds.width / fullWidth, bounds.height / fullHeight)));
-      const translate = [fullWidth / 2 - scale * midX, fullHeight / 2 - scale * midY];
-
-      svg.transition().duration(duration).call(
-        zoomBehavior.transform,
-        d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale)
-      );
-    }
-
-    // ============================================
-    // CONTROLLI ZOOM & TASTI
-    // ============================================
-    document.getElementById("btn-zoom-in").addEventListener("click", () => {
-      svg.transition().duration(250).call(zoomBehavior.scaleBy, 1.25);
-    });
-
-    document.getElementById("btn-zoom-out").addEventListener("click", () => {
-      svg.transition().duration(250).call(zoomBehavior.scaleBy, 0.8);
-    });
-
-    document.getElementById("btn-zoom-reset").addEventListener("click", () => {
-      svg.transition().duration(500).call(
-        zoomBehavior.transform,
-        d3.zoomIdentity.translate(120, height / 2).scale(1)
-      );
-    });
-
-    document.getElementById("btn-fit-screen").addEventListener("click", () => {
-      fitToScreen();
-    });
-
-    // Espandi tutto
-    document.getElementById("btn-expand-all").addEventListener("click", () => {
-      expandSubtree(root);
-      update(root);
-      setTimeout(() => fitToScreen(600), 450);
-    });
-
-    // Comprimi tutto (eccetto primo livello)
-    document.getElementById("btn-collapse-all").addEventListener("click", () => {
-      if (root.children) {
-        root.children.forEach(collapseSubtree);
-      }
-      update(root);
-      setTimeout(() => fitToScreen(600), 450);
-    });
-
-    // ============================================
-    // FUNZIONE DI RICERCA
-    // ============================================
-    const searchInput = document.getElementById("search-input");
-    const clearSearchBtn = document.getElementById("clear-search");
-
-    searchInput.addEventListener("input", (e) => {
-      const query = e.target.value.trim().toLowerCase();
-      clearSearchBtn.classList.toggle("hidden", query.length === 0);
-
-      if (!query) {
-        d3.selectAll(".node-pill").classed("matched", false);
-        return;
-      }
-
-      // Se c'è una query, espandi i rami per raggiungere i nodi trovati
-      let matchedNode = null;
-      function searchAndExpand(d) {
-        const match = d.data.name.toLowerCase().includes(query) || (d.data.desc && d.data.desc.toLowerCase().includes(query));
-        let childMatch = false;
-
-        const allChildren = (d.children || []).concat(d._children || []);
-        allChildren.forEach(child => {
-          if (searchAndExpand(child)) {
-            childMatch = true;
-          }
-        });
-
-        if (childMatch && d._children) {
-          d.children = d._children;
-          d._children = null;
-        }
-
-        if (match && !matchedNode) {
-          matchedNode = d;
-        }
-
-        return match || childMatch;
-      }
-
-      searchAndExpand(root);
-      update(root);
-
-      setTimeout(() => {
-        d3.selectAll(".node-pill").classed("matched", d => {
-          return d.data.name.toLowerCase().includes(query) || (d.data.desc && d.data.desc.toLowerCase().includes(query));
-        });
-
-        // Se abbiamo trovato un nodo, spostiamo delicatamente la visuale su di esso
-        if (matchedNode) {
-          const transform = d3.zoomIdentity
-            .translate(window.innerWidth / 2 - matchedNode.y, window.innerHeight / 2 - matchedNode.x)
-            .scale(1.1);
-          svg.transition().duration(600).call(zoomBehavior.transform, transform);
-        }
-      }, 400);
-    });
-
-    clearSearchBtn.addEventListener("click", () => {
-      searchInput.value = "";
-      clearSearchBtn.classList.add("hidden");
-      d3.selectAll(".node-pill").classed("matched", false);
-    });
-
-    // ============================================
-    // CAMBIO TEMA (LIGHT / DARK)
-    // ============================================
-    let isDark = true;
-    const themeBtn = document.getElementById("btn-toggle-theme");
-    const themeIcon = document.getElementById("theme-icon");
-
-    themeBtn.addEventListener("click", () => {
-      isDark = !isDark;
-      document.body.classList.toggle("light-theme", !isDark);
-      themeIcon.textContent = isDark ? "☀️" : "🌙";
-    });
-
-    // ============================================
-    // DRAWER STRUTTURA AD ALBERO (SOMMARIO)
-    // ============================================
-    const outlineDrawer = document.getElementById("outline-drawer");
-    const toggleOutlineBtn = document.getElementById("btn-toggle-outline");
-    const closeOutlineBtn = document.getElementById("btn-close-outline");
-    const outlineContainer = document.getElementById("outline-tree-container");
-
-    toggleOutlineBtn.addEventListener("click", () => {
-      outlineDrawer.classList.toggle("translate-x-full");
-    });
-
-    closeOutlineBtn.addEventListener("click", () => {
-      outlineDrawer.classList.add("translate-x-full");
-    });
-
-    function renderOutlineTree() {
-      function generateHtml(item, depth = 0) {
-        const indent = depth * 14;
-        const hasChildren = (item.children && item.children.length > 0) || (item._children && item._children.length > 0);
-        const children = item.children || item._children || [];
-        
-        const badgeColor = depth === 0 ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' :
-                           depth === 1 ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' :
-                           depth === 2 ? 'bg-teal-500/20 text-teal-300 border-teal-500/30' :
-                                         'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
-
-        let html = `
-          <div class="group select-none">
-            <div style="padding-left: ${indent}px" class="py-1 flex items-center gap-1.5 hover:bg-slate-800/60 rounded-lg px-2 transition cursor-pointer text-xs">
-              <span class="text-[10px] opacity-70">${hasChildren ? '▸' : '•'}</span>
-              <span class="px-1.5 py-0.5 rounded border text-[10px] font-medium ${badgeColor}">L${depth}</span>
-              <span class="text-slate-200 group-hover:text-indigo-300 transition-colors font-medium">${item.data ? item.data.name : item.name}</span>
-            </div>
-            ${children.map(child => generateHtml(child, depth + 1)).join('')}
-          </div>
-        `;
-        return html;
-      }
-
-      outlineContainer.innerHTML = generateHtml(root);
-    }
-
-    // Inizializzazione della vista al caricamento
-    window.onload = function () {
-      update(root);
-      setTimeout(() => {
-        fitToScreen(800);
-      }, 100);
-    };
-  </script>
 </body>
 </html>
